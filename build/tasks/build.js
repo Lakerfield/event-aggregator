@@ -1,57 +1,57 @@
 var gulp = require('gulp');
 var runSequence = require('run-sequence');
-var to5 = require('gulp-babel');
+var ts = require('gulp-typescript');
+var sourcemaps = require('gulp-sourcemaps');
+var merge = require('merge2');
 var paths = require('../paths');
-var compilerOptions = require('../babel-options');
+var compilerOptions = require('../ts-options');
 var assign = Object.assign || require('object.assign');
 var rename = require('gulp-rename');
 
-var jsName = paths.packageName + '.js';
+var tsName = paths.packageName + '.ts';
 
 gulp.task('build-index', function(){
-  return gulp.src(paths.root + 'index.js')
-    .pipe(rename(jsName))
+  return gulp.src(paths.root + 'index.ts')
+    .pipe(rename(tsName))
     .pipe(gulp.dest(paths.output));
 });
 
 gulp.task('build-es6', function () {
-  return gulp.src(paths.output + jsName)
-    .pipe(gulp.dest(paths.output + 'es6'));
+  return buildModule('es6', 'es6', 'es6');
 });
 
 gulp.task('build-commonjs', function () {
-  return gulp.src(paths.output + jsName)
-    .pipe(to5(assign({}, compilerOptions, {modules:'common'})))
-    .pipe(gulp.dest(paths.output + 'commonjs'));
+  return buildModule('es5', 'commonjs', 'commonjs');
 });
 
 gulp.task('build-amd', function () {
-  return gulp.src(paths.output + jsName)
-    .pipe(to5(assign({}, compilerOptions, {modules:'amd'})))
-    .pipe(gulp.dest(paths.output + 'amd'));
+  return buildModule('es5', 'amd', 'amd');
 });
 
 gulp.task('build-system', function () {
-  return gulp.src(paths.output + jsName)
-    .pipe(to5(assign({}, compilerOptions, {modules:'system'})))
-    .pipe(gulp.dest(paths.output + 'system'));
+  return buildModule('es5', 'system', 'system');
 });
 
-gulp.task('build-dts', function(){
-  return gulp.src(paths.output + paths.packageName + '.d.ts')
-      .pipe(rename(paths.packageName + '.d.ts'))
-      .pipe(gulp.dest(paths.output + 'es6'))
-      .pipe(gulp.dest(paths.output + 'commonjs'))
-      .pipe(gulp.dest(paths.output + 'amd'))
-      .pipe(gulp.dest(paths.output + 'system'));
-});
+function buildModule(target, moduleType, dirName) {
+  var tsResult = gulp.src([
+    paths.output + tsName, 
+    paths.typings])
+    .pipe(sourcemaps.init())//{loadMaps: true}
+    .pipe(ts(assign({}, compilerOptions, {"target":target,"module":moduleType})));
+
+  return merge([
+    tsResult.dts.pipe(gulp.dest(paths.output + dirName)),
+    tsResult.js
+      .pipe(sourcemaps.write('.', {includeContent: true}))    
+      .pipe(gulp.dest(paths.output + dirName))
+  ]);
+}
 
 gulp.task('build', function(callback) {
   return runSequence(
     'clean',
     'build-index',
     ['build-es6', 'build-commonjs', 'build-amd', 'build-system'],
-    'build-dts',
     callback
   );
 });

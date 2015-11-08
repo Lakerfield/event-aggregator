@@ -3,10 +3,10 @@ import * as LogManager from 'aurelia-logging';
 const logger = LogManager.getLogger('event-aggregator');
 
 class Handler {
-  constructor(private messageType: any, private callback: Function) {
+  constructor(private messageType: any, private callback: (message: any) => void) {
   }
 
-  handle(message) {
+  handle(message: any) {
     if (message instanceof this.messageType) {
       this.callback.call(null, message);
     }
@@ -41,10 +41,12 @@ export class EventAggregator {
   * @param event The event or channel to publish to.
   * @param data The data to publish on the channel.
   */
-  publish(event: string | any, data?: any): void {
-    let subscribers;
-    let i;
-
+  publish<T>(event: T): void;
+  publish(event: string, data?: any): void;
+  publish(event: any, data?: any): void {
+    let subscribers: any[];
+    let i: number;
+    
     if (typeof event === 'string') {
       subscribers = this.eventLookup[event];
       if (subscribers) {
@@ -78,9 +80,11 @@ export class EventAggregator {
   * @param event The event channel or event data type.
   * @param callback The callback to be invoked when when the specified message is published.
   */
-  subscribe(event: string | Function, callback: Function): Subscription {
-    let handler;
-    let subscribers;
+  subscribe<T>(event: Constructor<T>, callback: (message: T) => void): Subscription;
+  subscribe(event: string, callback: (message: any, event?: string) => void): Subscription;
+  subscribe(event: string|Constructor<any>, callback: (message: any, event?: string) => void): Subscription {
+    let handler: Function|Handler;
+    let subscribers: any[];  
 
     if (typeof event === 'string') {
       handler = callback;
@@ -107,8 +111,10 @@ export class EventAggregator {
   * @param event The event channel or event data type.
   * @param callback The callback to be invoked when when the specified message is published.
   */
-  subscribeOnce(event: string | Function, callback: Function): Subscription {
-    let sub = this.subscribe(event, (a, b) => {
+  subscribeOnce<T>(event: Constructor<T>, callback: (message: T) => void): Subscription;
+  subscribeOnce(event: string, callback: (message: any, event?: string) => void): Subscription;
+  subscribeOnce(event: string|Constructor<any>, callback: (message: any, event?: string) => void): Subscription {
+    let sub = this.subscribe(<any>event, (a, b) => {
       sub.dispose();
       return callback(a, b);
     });
@@ -124,17 +130,9 @@ export class EventAggregator {
 export function includeEventsIn(obj: any): EventAggregator {
   let ea = new EventAggregator();
 
-  obj.subscribeOnce = function(event, callback) {
-    return ea.subscribeOnce(event, callback);
-  };
-
-  obj.subscribe = function(event, callback) {
-    return ea.subscribe(event, callback);
-  };
-
-  obj.publish = function(event, data) {
-    ea.publish(event, data);
-  };
+  obj.subscribeOnce = (event: any, callback: any) => ea.subscribeOnce(event, callback);
+  obj.subscribe = (event: any, callback: any) => ea.subscribe(event, callback);
+  obj.publish = (event: any, data?: any) => ea.publish(event, data);
 
   return ea;
 }

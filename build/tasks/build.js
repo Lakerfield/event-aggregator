@@ -47,11 +47,20 @@ function buildModule(target, moduleType, dirName) {
   ]);
 }
 
+gulp.task('prepare-docs', function () {
+  return gulp.src([
+      paths.output + 'es6/*.d.ts',
+      './typings/interfaces.d.ts'
+    ])
+    .pipe(gulp.dest(paths.output));
+});
+
 gulp.task('build', function(callback) {
   return runSequence(
     'clean',
     'build-index',
     ['build-es6', 'build-commonjs', 'build-amd', 'build-system'],
+    'prepare-docs',
     callback
   );
 });

@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "declaration": true,
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "sourceMap": false,
+    "inlineSourceMap": true
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

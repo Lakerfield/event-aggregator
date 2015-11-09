@@ -1,11 +1,6 @@
 System.config({
   defaultJSExtensions: true,
-  transpiler: "babel",
-  babelOptions: {
-    "optional": [
-      "runtime"
-    ]
-  },
+  transpiler: "typescript",
   paths: {
     "github:*": "jspm_packages/github/*",
     "npm:*": "jspm_packages/npm/*"
@@ -13,9 +8,8 @@ System.config({
 
   map: {
     "aurelia-logging": "github:aurelia/logging@0.8.0",
-    "babel": "npm:babel-core@5.4.7",
-    "babel-runtime": "npm:babel-runtime@5.4.7",
     "core-js": "npm:core-js@0.9.11",
+    "typescript": "npm:typescript@1.6.2",
     "github:jspm/nodelibs-process@0.1.1": {
       "process": "npm:process@0.10.1"
     },

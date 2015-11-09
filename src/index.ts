@@ -3,9 +3,7 @@ import * as LogManager from 'aurelia-logging';
 const logger = LogManager.getLogger('event-aggregator');
 
 class Handler {
-  constructor(messageType, callback) {
-    this.messageType = messageType;
-    this.callback = callback;
+  constructor(private messageType: any, private callback: Function) {
   }
 
   handle(message) {
@@ -18,7 +16,7 @@ class Handler {
 /**
 * Represents a disposable subsciption to an EventAggregator event.
 */
-interface Subscription {
+export interface Subscription {
   /**
   * Disposes the subscription.
   */
@@ -29,12 +27,13 @@ interface Subscription {
 * Enables loosely coupled publish/subscribe messaging.
 */
 export class EventAggregator {
+  private eventLookup: any = {};
+  private messageHandlers: Handler[] = [];
+  
   /**
   * Creates an instance of the EventAggregator class.
   */
   constructor() {
-    this.eventLookup = {};
-    this.messageHandlers = [];
   }
 
   /**
@@ -122,7 +121,7 @@ export class EventAggregator {
 * Includes EA functionality into an object instance.
 * @param obj The object to mix Event Aggregator functionality into.
 */
-export function includeEventsIn(obj: Object): EventAggregator {
+export function includeEventsIn(obj: any): EventAggregator {
   let ea = new EventAggregator();
 
   obj.subscribeOnce = function(event, callback) {
@@ -144,6 +143,6 @@ export function includeEventsIn(obj: Object): EventAggregator {
 * Configures a global EA by merging functionality into the Aurelia instance.
 * @param config The Aurelia Framework configuration object used to configure the plugin.
 */
-export function configure(config: Object): void {
+export function configure(config: any): void {
   config.instance(EventAggregator, includeEventsIn(config.aurelia));
 }

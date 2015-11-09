@@ -12,9 +12,16 @@ module.exports = function(config) {
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: ['jspm', 'jasmine'],
 
+		plugins: [
+			'karma-jasmine',
+			'karma-chrome-launcher',
+      'karma-typescript-preprocessor'
+		],
+
+
     jspm: {
       // Edit this to your needs
-      loadFiles: ['src/**/*.js', 'test/**/*.js']
+      loadFiles: ['src/**/*.ts', 'test/**/*.ts']
     },
 
 
@@ -30,19 +37,21 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'test/**/*.js': ['babel'],
-      'src/**/*.js': ['babel']
+      'test/**/*.ts': ['typescript'],
+      'src/**/*.ts': ['typescript']
     },
-    'babelPreprocessor': {
+    typescriptPreprocessor: {
       options: {
-        sourceMap: 'inline',
-        modules: 'system',
-        moduleIds: false,
-        loose: "all",
-        optional: [
-          "es7.decorators"
-        ]
-      }
+        sourceMap: false,
+        inlineSourceMap: true,
+        target: 'ES5',
+        module: 'system',
+        noExternalResolve: true,
+        noImplicitAny: false,
+        noEmitOnError: true,
+        experimentalDecorators: true
+      },
+      typings: ['jspm_packages/**/*.d.ts']
     },
 
     // test results reporter to use

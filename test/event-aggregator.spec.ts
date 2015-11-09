@@ -26,8 +26,8 @@ describe('event aggregator', () => {
         let callback = function(){};
         ea.subscribe('dinner', callback);
 
-        expect(ea.eventLookup.dinner.length).toBe(1);
-        expect(ea.eventLookup.dinner[0]).toBe(callback);
+        expect((<any>ea).eventLookup.dinner.length).toBe(1);
+        expect((<any>ea).eventLookup.dinner[0]).toBe(callback);
       });
 
       it('adds multiple callbacks the same event', () =>{
@@ -38,9 +38,9 @@ describe('event aggregator', () => {
         let callback2 = function(){};
         ea.subscribe('dinner', callback2);
 
-        expect(ea.eventLookup.dinner.length).toBe(2);
-        expect(ea.eventLookup.dinner[0]).toBe(callback);
-        expect(ea.eventLookup.dinner[1]).toBe(callback2);
+        expect((<any>ea).eventLookup.dinner.length).toBe(2);
+        expect((<any>ea).eventLookup.dinner[0]).toBe(callback);
+        expect((<any>ea).eventLookup.dinner[1]).toBe(callback2);
       });
 
       it('removes the callback after execution', ()=>{
@@ -52,17 +52,17 @@ describe('event aggregator', () => {
         let callback2 = function(){};
         let subscription2 = ea.subscribe('dinner', callback2);
 
-        expect(ea.eventLookup.dinner.length).toBe(2);
-        expect(ea.eventLookup.dinner[0]).toBe(callback);
-        expect(ea.eventLookup.dinner[1]).toBe(callback2);
+        expect((<any>ea).eventLookup.dinner.length).toBe(2);
+        expect((<any>ea).eventLookup.dinner[0]).toBe(callback);
+        expect((<any>ea).eventLookup.dinner[1]).toBe(callback2);
 
         subscription.dispose();
 
-        expect(ea.eventLookup.dinner.length).toBe(1);
-        expect(ea.eventLookup.dinner[0]).toBe(callback2);
+        expect((<any>ea).eventLookup.dinner.length).toBe(1);
+        expect((<any>ea).eventLookup.dinner[0]).toBe(callback2);
 
         subscription2.dispose();
-        expect(ea.eventLookup.dinner.length).toBe(0);
+        expect((<any>ea).eventLookup.dinner.length).toBe(0);
       });
 
       it('will respond to an event any time it is published', ()=>{
@@ -70,15 +70,15 @@ describe('event aggregator', () => {
         let callback = function(){};
         ea.subscribe('dinner', callback);
 
-        expect(ea.eventLookup.dinner.length).toBe(1);
-        expect(ea.eventLookup.dinner[0]).toBe(callback);
+        expect((<any>ea).eventLookup.dinner.length).toBe(1);
+        expect((<any>ea).eventLookup.dinner[0]).toBe(callback);
 
         ea.publish('dinner');
         ea.publish('dinner');
         ea.publish('dinner');
 
-        expect(ea.eventLookup.dinner.length).toBe(1);
-        expect(ea.eventLookup.dinner[0]).toBe(callback);
+        expect((<any>ea).eventLookup.dinner.length).toBe(1);
+        expect((<any>ea).eventLookup.dinner[0]).toBe(callback);
       });
 
       it('will pass published data to the callback function', ()=>{
@@ -87,8 +87,8 @@ describe('event aggregator', () => {
         let callback = function(d){ data = d;};
         ea.subscribe('dinner', callback);
 
-        expect(ea.eventLookup.dinner.length).toBe(1);
-        expect(ea.eventLookup.dinner[0]).toBe(callback);
+        expect((<any>ea).eventLookup.dinner.length).toBe(1);
+        expect((<any>ea).eventLookup.dinner[0]).toBe(callback);
 
         ea.publish('dinner',{foo:"bar"});
         expect(data.foo).toBe("bar");
@@ -118,9 +118,9 @@ describe('event aggregator', () => {
         let callback = function(){};
         ea.subscribe(DinnerEvent, callback);
 
-        expect(ea.messageHandlers.length).toBe(1);
-        expect(ea.messageHandlers[0].messageType).toBe(DinnerEvent);
-        expect(ea.messageHandlers[0].callback).toBe(callback);
+        expect((<any>ea).messageHandlers.length).toBe(1);
+        expect((<any>ea).messageHandlers[0].messageType).toBe(DinnerEvent);
+        expect((<any>ea).messageHandlers[0].callback).toBe(callback);
       });
 
       it('removes the handler after execution', () =>{
@@ -128,9 +128,9 @@ describe('event aggregator', () => {
         let callback = function(){};
         let subscription = ea.subscribe(DinnerEvent, callback);
 
-        expect(ea.messageHandlers.length).toBe(1);
+        expect((<any>ea).messageHandlers.length).toBe(1);
         subscription.dispose();
-        expect(ea.messageHandlers.length).toBe(0);
+        expect((<any>ea).messageHandlers.length).toBe(0);
       });
 
     });
@@ -146,9 +146,9 @@ describe('event aggregator', () => {
         let callback = function(){};
         ea.subscribeOnce('dinner', callback);
 
-        expect(ea.eventLookup.dinner.length).toBe(1);
-        expect(ea.eventLookup.dinner[0] === callback).toBe(false);
-        expect(typeof ea.eventLookup.dinner[0] === "function").toBe(true);
+        expect((<any>ea).eventLookup.dinner.length).toBe(1);
+        expect((<any>ea).eventLookup.dinner[0] === callback).toBe(false);
+        expect(typeof (<any>ea).eventLookup.dinner[0] === "function").toBe(true);
       });
 
       it('adds multiple callbacks the same event', () =>{
@@ -159,11 +159,11 @@ describe('event aggregator', () => {
         let callback2 = function(){};
         ea.subscribeOnce('dinner', callback2);
 
-        expect(ea.eventLookup.dinner.length).toBe(2);
-        expect(ea.eventLookup.dinner[0] === callback).toBe(false);
-        expect(typeof ea.eventLookup.dinner[0] === "function").toBe(true);
-        expect(ea.eventLookup.dinner[1] === callback).toBe(false);
-        expect(typeof ea.eventLookup.dinner[1] === "function").toBe(true);
+        expect((<any>ea).eventLookup.dinner.length).toBe(2);
+        expect((<any>ea).eventLookup.dinner[0] === callback).toBe(false);
+        expect(typeof (<any>ea).eventLookup.dinner[0] === "function").toBe(true);
+        expect((<any>ea).eventLookup.dinner[1] === callback).toBe(false);
+        expect(typeof (<any>ea).eventLookup.dinner[1] === "function").toBe(true);
       });
 
       it('removes the callback after execution', ()=>{
@@ -174,19 +174,19 @@ describe('event aggregator', () => {
         let callback2 = function(){};
         let subscription2 = ea.subscribeOnce('dinner', callback2);
 
-        expect(ea.eventLookup.dinner.length).toBe(2);
-        expect(ea.eventLookup.dinner[0] === callback).toBe(false);
-        expect(typeof ea.eventLookup.dinner[0] === "function").toBe(true);
-        expect(ea.eventLookup.dinner[1] === callback2).toBe(false);
-        expect(typeof ea.eventLookup.dinner[1] === "function").toBe(true);
+        expect((<any>ea).eventLookup.dinner.length).toBe(2);
+        expect((<any>ea).eventLookup.dinner[0] === callback).toBe(false);
+        expect(typeof (<any>ea).eventLookup.dinner[0] === "function").toBe(true);
+        expect((<any>ea).eventLookup.dinner[1] === callback2).toBe(false);
+        expect(typeof (<any>ea).eventLookup.dinner[1] === "function").toBe(true);
 
         subscription.dispose();
 
-        expect(ea.eventLookup.dinner.length).toBe(1);
-        expect(typeof ea.eventLookup.dinner[0] === "function").toBe(true);
+        expect((<any>ea).eventLookup.dinner.length).toBe(1);
+        expect(typeof (<any>ea).eventLookup.dinner[0] === "function").toBe(true);
 
         subscription2.dispose();
-        expect(ea.eventLookup.dinner.length).toBe(0);
+        expect((<any>ea).eventLookup.dinner.length).toBe(0);
       });
 
       it('will respond to an event only once', ()=>{
@@ -196,14 +196,14 @@ describe('event aggregator', () => {
         let callback = function(){data = "something";};
         ea.subscribeOnce('dinner', callback);
 
-        expect(ea.eventLookup.dinner.length).toBe(1);
-        expect(ea.eventLookup.dinner[0] === callback).toBe(false);
-        expect(typeof ea.eventLookup.dinner[0] === "function").toBe(true);
+        expect((<any>ea).eventLookup.dinner.length).toBe(1);
+        expect((<any>ea).eventLookup.dinner[0] === callback).toBe(false);
+        expect(typeof (<any>ea).eventLookup.dinner[0] === "function").toBe(true);
 
         ea.publish('dinner');
         expect(data).toBe("something");
 
-        expect(ea.eventLookup.dinner.length).toBe(0);
+        expect((<any>ea).eventLookup.dinner.length).toBe(0);
 
         data = null;
         ea.publish('dinner');
@@ -217,9 +217,9 @@ describe('event aggregator', () => {
         let callback = function(d){data = d;};
         ea.subscribeOnce('dinner', callback);
 
-        expect(ea.eventLookup.dinner.length).toBe(1);
-        expect(ea.eventLookup.dinner[0] === callback).toBe(false);
-        expect(typeof ea.eventLookup.dinner[0] === "function").toBe(true);
+        expect((<any>ea).eventLookup.dinner.length).toBe(1);
+        expect((<any>ea).eventLookup.dinner[0] === callback).toBe(false);
+        expect(typeof (<any>ea).eventLookup.dinner[0] === "function").toBe(true);
 
         ea.publish('dinner',{foo:"bar"});
         expect(data.foo).toBe("bar");
@@ -238,10 +238,10 @@ describe('event aggregator', () => {
         let callback = function(){};
         ea.subscribeOnce(DinnerEvent, callback);
 
-        expect(ea.messageHandlers.length).toBe(1);
-        expect(ea.messageHandlers[0].messageType).toBe(DinnerEvent);
-        expect(ea.messageHandlers[0].callback === callback).toBe(false);
-        expect(typeof ea.messageHandlers[0].callback === "function").toBe(true);
+        expect((<any>ea).messageHandlers.length).toBe(1);
+        expect((<any>ea).messageHandlers[0].messageType).toBe(DinnerEvent);
+        expect((<any>ea).messageHandlers[0].callback === callback).toBe(false);
+        expect(typeof (<any>ea).messageHandlers[0].callback === "function").toBe(true);
 
       });
 
@@ -250,9 +250,9 @@ describe('event aggregator', () => {
         let callback = function(){};
         let subscription = ea.subscribeOnce(DinnerEvent, callback);
 
-        expect(ea.messageHandlers.length).toBe(1);
+        expect((<any>ea).messageHandlers.length).toBe(1);
         subscription.dispose();
-        expect(ea.messageHandlers.length).toBe(0);
+        expect((<any>ea).messageHandlers.length).toBe(0);
       });
 
     });
@@ -394,6 +394,8 @@ describe('event aggregator', () => {
 });
 
 class DinnerEvent {
+  private _message: any;
+
   constructor(message){
     this._message = message;
   }
@@ -404,6 +406,8 @@ class DinnerEvent {
 }
 
 class AnotherDinnerEvent {
+  private _message: any;
+
   constructor(message){
     this._message = message;
   }
